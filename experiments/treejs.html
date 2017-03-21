@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { margin: 0; padding: 0;}
+    canvas { position: absolute; width: 1vw; height: 1vh; }
+  </style>
+  <meta charset=utf-8>
+</head>
+<body>
+<script src="http://threejs.org/build/three.min.js"></script>
+<script>
+
+  var scene = new THREE.Scene();
+
+  // add a camera
+  // THREE.PerspectiveCamera(fov, aspect, near, far)
+  var camera = new THREE.PerspectiveCamera(
+      75,
+      window.innerWidth/window.innerHeight,
+      0.1,
+      1000
+  );
+
+  // place the camera at z of 100
+  camera.position.y = 100;
+  camera.position.z = 500;
+  camera.rotation.x = -0.3;
+
+  // add a renderer
+  var renderer = new THREE.WebGLRenderer();
+  renderer.setSize( window.innerWidth, window.innerHeight );
+  // add the renderer element to the DOM so it is in our page
+  document.body.appendChild( renderer.domElement );
+
+
+  var geometry = new THREE.BoxGeometry(2000, 1, 2000);
+  var material = new THREE.MeshLambertMaterial({color: 0x00ff66});
+  var ground = new THREE.Mesh(geometry, material);
+  scene.add(ground);
+
+  /* we need to add a light so we can see our cube - its almost
+   as if we're turning on a lightbulb within the room */
+  var light = new THREE.PointLight(0xFFFFFF);
+  /* position the light so it shines on the cube (x, y, z) */
+  light.position.set(1000, 1000, 1000);
+  scene.add(light);
+
+  var entity1 = spawn_entity(0xff0000);
+  scene.add(entity1);
+  entity1.position.x = 0;
+  entity1.position.y = 0;
+  entity1.position.z = 0;
+
+  var entity2 = spawn_entity(0x0000ff);
+  entity2.position.x = 50;
+  entity2.position.y = 10;
+  entity2.position.z = 300;
+
+
+  function spawn_entity(color) {
+    geometry = new THREE.BoxGeometry(10, 10, 10);
+    material = new THREE.MeshLambertMaterial({color});
+    var entity = new THREE.Mesh(geometry, material);
+    scene.add(entity);
+    return entity;
+  }
+
+  var mouse_move = null;
+
+  var render = function () {
+    requestAnimationFrame( render );
+var v;
+
+    switch (mouse_move) {
+      case 'left':
+        //camera.rotateY(0.05);
+          v = camera.position.clone();
+        v.y++;
+
+        camera.rotateOnAxis(camera.worldToLocal(v), 0.02);
+            break;
+      case 'right':
+        v = camera.position.clone();
+        v.y++;
+
+        //camera.rotateY(-0.05);
+        camera.rotateOnAxis(camera.worldToLocal(v), -0.02);
+        break;
+      case 'up':
+        v = camera.position.clone();
+        v.x++;
+
+        camera.rotateX(0.02);
+          //camera.rotateOnAxis(camera.worldToLocal(v), 0.02);
+        break;
+      case 'down':
+        v = camera.position.clone();
+        v.x++;
+
+        //camera.rotateOnAxis(camera.worldToLocal(v), -0.02);
+        camera.rotateX(-0.02);
+        break;
+    }
+
+    camera.updateProjectionMatrix();
+
+    renderer.render(scene, camera);
+
+  };
+
+  render();
+
+
+  renderer.domElement.tabIndex = 0;
+  renderer.domElement.focus();
+  renderer.domElement.onkeypress = (evt) => {
+    switch (evt.key) {
+      case "ArrowRight":
+          camera.translateX(1);
+        //camera.position.x += 1;
+        break;
+      case "ArrowLeft":
+        camera.translateX(-1);
+
+        //camera.position.x -= 1;
+        break;
+      case "ArrowUp":
+        camera.translateZ(-1);
+        //camera.position.z -= 1;
+        break;
+      case "ArrowDown":
+        camera.translateZ(1);
+        //camera.position.z += 1;
+        break;
+      case 'zoom':
+            camera.zoom += 0.1;
+        mouse_move = null;
+
+        break;
+      case 'unzoom':
+            camera.zoom -= 0.1;
+          mouse_move = null;
+            break;
+      default :
+        return true;
+    }
+
+    return false;
+  };
+
+  renderer.domElement.onmouseleave = () => {
+    mouse_move = null;
+  }
+
+  renderer.domElement.onmousemove = evt => {
+    width = renderer.domElement.width;
+    height = renderer.domElement.height;
+
+    if (evt.clientX < (width / 10))
+      mouse_move = 'left';
+    else if (evt.clientX > ( 9 * width / 10))
+      mouse_move = 'right';
+    else if (evt.clientY < (height / 10))
+      mouse_move = 'up';
+    else if (evt.clientY > ( 9 * height/ 10))
+      mouse_move = 'down';
+    else
+      mouse_move = null;
+  };
+
+  renderer.domElement.addEventListener('wheel', function(evt) {
+    mouse_move = evt.deltaY < 0 ? 'zoom' : 'unzoom';
+    console.log('ok')
+  });
+
+
+</script>
+</body>
+</html>
