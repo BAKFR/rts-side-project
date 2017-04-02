@@ -1,0 +1,27 @@
+{
+  "name": "rts-side-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "./node_modules/.bin/webpack -w & ./node_modules/.bin/nodemon -w build build/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BAKFR/rts-side-project.git"
+  },
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/BAKFR/rts-side-project/issues"
+  },
+  "homepage": "https://github.com/BAKFR/rts-side-project#readme",
+  "dependencies": {
+    "express": "^4.15.2",
+    "socket.io": "^1.7.3",
+    "webpack": "^2.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
+  }
+}
